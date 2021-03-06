@@ -8,6 +8,7 @@ import argparse
 parser = argparse.ArgumentParser()
 #parser.add_argument("-w", "--week", type=int, help="Specify which week of activity to review", default=-1)
 parser.add_argument("-c", "--culumative", action="store_true", help="Switch to displaying culumative effort instead of weekly effort")
+parser.add_argument("-e", "--exclude", action="store_true", help="Excludes the current week's activities from the total")
 args = parser.parse_args()
 
 start_time = 1615032000
@@ -95,6 +96,33 @@ times = {name[0]: times[name[0]] for name in sorted(times.items(), key=lambda x:
 readable_times = {name: str(datetime.timedelta(seconds=times[name])) for name in times.keys()}
 
 total_time = sum(times.values())
+
+if args.exclude:
+    activity_start_time = start_time
+    activity_end_time = start_time + 9*time_in_a_week
+
+    request_url = "https://www.strava.com/api/v3/clubs/" + str(club_id) + "/activities"
+    params = {"after": activity_start_time, "per_page": per_page, "page": page} 
+    headers = {"Authorization": "Bearer " + access}
+
+    times2 = {}
+
+    activites_data2 = []
+    r2 = requests.get(request_url, params=params, headers=headers)
+    current_activites2 = json.loads(r2.text)
+    activites_data2 += current_activites2
+
+    for activitiy in activites_data2:
+        name = activitiy["athlete"]["firstname"] + activitiy["athlete"]["lastname"]
+        times[name] = times.get(name, 0) + activitiy["moving_time"]
+
+
+    times2 = {name[0]: times[name[0]] for name in sorted(times.items(), key=lambda x: x[1], reverse=True)}
+
+    total_time2 = sum(times2.values())
+
+    total_time = total_time2-total_time
+    
 
 print("Total time", str(datetime.timedelta(seconds=total_time)))
 if len(activites_data) == per_page:
