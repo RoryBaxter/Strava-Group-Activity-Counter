@@ -1,0 +1,4 @@
+XXXXXXXXXX                                  Expire time
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX    Refresh token
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX    Access token
+XXXXXX                                      Club ID
