@@ -11,7 +11,7 @@ parser.add_argument("-c", "--culumative", action="store_true", help="Switch to d
 parser.add_argument("-e", "--exclude", action="store_true", help="Excludes the current week's activities from the total")
 args = parser.parse_args()
 
-start_time = 1615032000
+start_time = 1615032000 - 604800
 time_in_a_week = 604800
 per_page = 200 #200 per page seems to be the max
 page = 1
@@ -77,6 +77,7 @@ r = requests.get(request_url, params=params, headers=headers)
 current_activites = json.loads(r.text)
 activites_data += current_activites
 
+
 ''' This is my attempt to get multiple pages of information, but it seems to always return the same page
 while len(current_activites) == per_page:
     page += 1
@@ -114,10 +115,10 @@ if args.exclude:
 
     for activitiy in activites_data2:
         name = activitiy["athlete"]["firstname"] + activitiy["athlete"]["lastname"]
-        times[name] = times.get(name, 0) + activitiy["moving_time"]
+        times2[name] = times2.get(name, 0) + activitiy["moving_time"]
 
 
-    times2 = {name[0]: times[name[0]] for name in sorted(times.items(), key=lambda x: x[1], reverse=True)}
+    times2 = {name[0]: times2[name[0]] for name in sorted(times2.items(), key=lambda x: x[1], reverse=True)}
 
     total_time2 = sum(times2.values())
 
