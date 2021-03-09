@@ -11,7 +11,7 @@ parser.add_argument("-c", "--culumative", action="store_true", help="Switch to d
 parser.add_argument("-e", "--exclude", action="store_true", help="Excludes the current week's activities from the total")
 args = parser.parse_args()
 
-start_time = 1615032000 - 604800
+start_time = 1615032000
 time_in_a_week = 604800
 per_page = 200 #200 per page seems to be the max
 page = 1
