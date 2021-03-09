@@ -62,9 +62,11 @@ if time.time() > int(expires):
 if args.culumative:
     activity_start_time = start_time
     activity_end_time = start_time + 9*time_in_a_week
+    string = "overall"
 else:
     activity_start_time = get_week_start_epoch()
     activity_end_time = activity_start_time + time_in_a_week
+    string = "this week"
 
 request_url = "https://www.strava.com/api/v3/clubs/" + str(club_id) + "/activities"
 params = {"after": activity_start_time, "per_page": per_page, "page": page} 
@@ -123,8 +125,9 @@ if args.exclude:
     total_time2 = sum(times2.values())
 
     total_time = total_time2-total_time
-    
 
-print("Total time", str(datetime.timedelta(seconds=total_time)))
+    string = "excluding this week"
+
+print("Total time " + string, str(datetime.timedelta(seconds=total_time)))
 if len(activites_data) == per_page:
     print("Warning, this may not inculde all activities")
