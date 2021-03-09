@@ -9,6 +9,7 @@ parser = argparse.ArgumentParser()
 #parser.add_argument("-w", "--week", type=int, help="Specify which week of activity to review", default=-1)
 parser.add_argument("-c", "--culumative", action="store_true", help="Switch to displaying culumative effort instead of weekly effort")
 parser.add_argument("-e", "--exclude", action="store_true", help="Excludes the current week's activities from the total")
+parser.add_argument("-i", "--individual", action="store_true", help="In addition to the total time, also prints out the individual breakdown")
 args = parser.parse_args()
 
 start_time = 1615032000
@@ -94,10 +95,6 @@ for activitiy in activites_data:
     times[name] = times.get(name, 0) + activitiy["moving_time"]
 
 
-times = {name[0]: times[name[0]] for name in sorted(times.items(), key=lambda x: x[1], reverse=True)}
-        
-readable_times = {name: str(datetime.timedelta(seconds=times[name])) for name in times.keys()}
-
 total_time = sum(times.values())
 
 if args.exclude:
@@ -119,15 +116,25 @@ if args.exclude:
         name = activitiy["athlete"]["firstname"] + activitiy["athlete"]["lastname"]
         times2[name] = times2.get(name, 0) + activitiy["moving_time"]
 
-
-    times2 = {name[0]: times2[name[0]] for name in sorted(times2.items(), key=lambda x: x[1], reverse=True)}
-
     total_time2 = sum(times2.values())
 
     total_time = total_time2-total_time
 
+    for athelte in times:
+        times[athelte] = times2[athelte] - times[athelte]
+
     string = "excluding this week"
 
-print("Total time " + string, str(datetime.timedelta(seconds=total_time)))
+times = {name[0]: times[name[0]] for name in sorted(times.items(), key=lambda x: x[1], reverse=True)}
+readable_times = {name: str(datetime.timedelta(seconds=times[name])) for name in times.keys()}
+
 if len(activites_data) == per_page:
     print("Warning, this may not inculde all activities")
+
+print("Total time " + string, str(datetime.timedelta(seconds=total_time)))
+
+if args.individual:
+    for athelte, time in readable_times.items():
+        if time == "0:00:00":
+            break
+        print(athelte[:-2], time)
