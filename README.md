@@ -11,5 +11,6 @@ TO USE
 7. To get the total for this week run command "python counter.py"
 8. To get cumulative total run command "python counter.py -c"
 9. To get the cumlative total excluding the current week run command "python counter.py -e"
+10. To get the individual breakdown of atheltes, add the argument "-i"
 
 *Contact me for help with this stage if stuck
