@@ -16,6 +16,7 @@ start_time = 1615032000
 time_in_a_week = 604800
 per_page = 200 #200 per page seems to be the max
 page = 1
+daylight_savings_start = 1616893200
 
 def get_week_start_epoch():
     ''' Get the epoch value for the start of this weeks time period '''
@@ -26,7 +27,11 @@ def get_week_start_epoch():
 
     return week_start_time
     
-    
+def daylight_time_adjust(current_time):
+    if current_time > daylight_savings_start:
+        return current_time + 3600
+    else:
+        return current_time
 
 with open("data.txt", "r") as file:
     data = file.readlines()
@@ -60,13 +65,13 @@ if time.time() > int(expires):
             file.write(str(club_id))
 
 
-if args.culumative:
+if args.culumative and not args.exclude:
     activity_start_time = start_time
     activity_end_time = start_time + 9*time_in_a_week
     string = "overall"
 else:
-    activity_start_time = get_week_start_epoch()
-    activity_end_time = activity_start_time + time_in_a_week
+    activity_start_time = daylight_time_adjust(get_week_start_epoch())
+    activity_end_time = daylight_time_adjust(activity_start_time + time_in_a_week)
     string = "this week"
 
 request_url = "https://www.strava.com/api/v3/clubs/" + str(club_id) + "/activities"
